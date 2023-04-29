@@ -1,6 +1,6 @@
 const apiURL = "https://webapi19sa-1.course.tamk.cloud/v1/weather";
 let timespan = 20;
-let urlpath = "temperature";
+let urlpath = "limit";
 let label = "Temperature";
 let labelunit = "Temperature (c)";
 let sensorname = "temperature";
@@ -34,45 +34,35 @@ timespandata.addEventListener('change', function() {
     switch (sensordata.value){
       case "temperature":
         urlpath = `temperature`;
-        label = "Temperature"
-        labelunit = "Temperature (c)"
         sensorname = "temperature"
         break;
       case "windspeed":
         urlpath = `wind_speed`;
-        label = "Wind Speed"
-        labelunit = "Wind Speed (m/s)"
         sensorname = "wind_speed"
         break;
       case "winddirection":
         urlpath = `wind_direction`;
-        label = "Wind Direction"
-        labelunit = "Wind Direction (deg)"
         sensorname = "wind_direction"
         break;
       case "rainamount":
         urlpath = `rain`;
-        label = "Rain Amount"
-        labelunit = "Rain Amount (mm)"
         sensorname = "rain"
         break;
       case "humidity_in":
         urlpath = `humidity_in`;
-        label = "Humidity Inside"
         labelunit = "Humidity (%)"
         sensorname = "humidity_in"
         break;
       case "humidity_out":
         urlpath = `humidity_out`;
-        label = "Humidity Outside"
-        labelunit = "Humidity (%)"
         sensorname = "humidity_out"
         break;
       case "light":
         urlpath = `light`;
-        label = "Light level"
-        labelunit = "Light level"
         sensorname = "light"
+        break;
+      case "all":
+        urlpath = `limit`;
         break;
     };
     getData();
@@ -83,17 +73,30 @@ function getData(){
     .then(response => response.json())
 			.then(data => {
         document.getElementById("dataloader").style.display = 'none';
-				var tbody = document.querySelector("#data-table tbody");        
+				var tbody = document.querySelector("#data-table tbody");    
+        let keys;
+        let title;    
+        let value;
         tbody.innerHTML = "";
 				data.forEach(function(item) {
+          console.log(item);
 					var tr = document.createElement("tr");
 					var td1 = document.createElement("td");
 					var td2 = document.createElement("td");
 					var td3 = document.createElement("td");
-          const keys = Object.keys(item);
-          const title = keys[1];
+          if(urlpath != "limit"){
+            keys = Object.keys(item);
+            title = keys[1];
+            value = item[`${sensorname}`];
+          }
+          else {
+            keys = Object.keys(item.data);
+            title = keys[0];
+            value = item.data[`${title}`];
+
+          }
 					td1.textContent = title.charAt(0).toUpperCase()+ title.slice(1);
-					td2.textContent = item[`${sensorname}`];
+					td2.textContent = value;
           td3.textContent = item.date_time;
 					tr.appendChild(td1);
 					tr.appendChild(td2);
@@ -102,5 +105,5 @@ function getData(){
 				});
 			})
 			.catch(error => console.error(error));
-        }
+}
 getData();

@@ -82,72 +82,129 @@ sensordata.addEventListener('change', function() {
 
 });
 
-function getWeather(){
-  showLoader();
-  fetch(`${apiURL}/${urlpath}/${timespan}`)
-  .then(response => response.json())
-  .then(data => {
-    hideLoader();
-    const weatherData = data.map(item => item[`${sensorname}`]);
-    console.log(weatherData);
-    calculateMath(weatherData);
-      const labels = Array.from({ length: weatherData.length }, (_, i ) => i + 1);
-      const chartConfig = {
-      type: 'line',
-      data: {
-          labels: labels,
-          datasets: [{
-              label: label,
-              data: weatherData,
-              backgroundColor: 'rgba(109,36,42)',
-              borderColor: 'rgba(109,3,3,0.2)',
-              borderWidth: 3
-          }]
-      },
-      options: {
-          scales: {
-            yAxes: [{
-              scaleLabel: {
-                display: true,
-                labelString: labelunit,
-              },
-              ticks: {
-                beginAtZero: true
-              },
-              gridLines: {
-                color: "rgba(0, 0, 0, 0)",
-            }
-            }],
-            xAxes:[{
-              gridLines: {
-                color: "rgba(0, 0, 0, 0)",
-            }
-            }]
+function fetchData() {
+  return fetch(`${apiURL}/${urlpath}/${timespan}`)
+    .then(response => response.json())
+    .then(data => data.map(item => item[`${sensorname}`]))
+    .catch(error => {
+      console.error(error);
+      throw new Error('Error fetching data, check connection.');
+    });
+}
+
+function createChart(weatherData) {
+  const labels = Array.from({ length: weatherData.length }, (_, i ) => i + 1);
+  const chartConfig = {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: label,
+        data: weatherData,
+        backgroundColor: 'rgba(246,189,210)',
+        borderColor: 'rgba(227,37,107)',
+        borderWidth: 3
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: labelunit,
+          },
+          ticks: {
+            beginAtZero: true
+          },
+          gridLines: {
+            color: "rgba(0, 0, 0, 0)",
           }
-        }
-      };
-      const ctx = document.getElementById('chart').getContext('2d');
-      if(chart != undefined) chart.destroy();
-      chart = new Chart(ctx, chartConfig);
-      chart.update();
-  })
-  .catch(error => {
-    console.error(error);
-    hideLoader();
-    document.getElementById("error").innerHTML = "Error fetching data, check connection.";
-  })
+        }],
+        xAxes:[{
+          gridLines: {
+            color: "rgba(0, 0, 0, 0)",
+          }
+        }]
+      }
+    }
+  };
+  const ctx = document.getElementById('chart').getContext('2d');
+  if(chart != undefined) chart.destroy();
+  chart = new Chart(ctx, chartConfig);
+  chart.update();
+}
+
+function getWeather() {
+  showLoader();
+  fetchData()
+    .then(weatherData => {
+      hideLoader();
+      calculateMath(weatherData);
+      createChart(weatherData);
+    })
+    .catch(error => {
+      hideLoader();
+      document.getElementById("error").innerHTML = error.message;
+    });
 }
 
 
-
 function getCurrentWeather(){
-  fetch(`${apiURL}/current`)
-  .then(response => response.json())
-  .then(data => {
-    console.log(data);
-    document.getElementById("current_temp").innerHTML = "homo";
+  fetch(`${apiURL}/limit/50`)
+    .then(response => response.json())
+    .then(data =>{
+      console.log(data);
+      let wind_direction_letter;
+      const temp = data.find(item => item.data.temperature !== undefined)?.data.temperature;
+      const wind_speed = data.find(item => item.data.wind_speed !== undefined)?.data.wind_speed;
+      const wind_direction = data.find(item => item.data.wind_direction !== undefined)?.data.wind_direction;
+      const rain = data.find(item => item.data.rain !== undefined)?.data.rain;
+      const light = data.find(item => item.data.light !== undefined)?.data.light;
+      const humidity_in = data.find(item => item.data.humidity_in !== undefined)?.data.humidity_in;
+      const humidity_out = data.find(item => item.data.humidity_out !== undefined)?.data.humidity_out;
 
-  })
+
+
+
+
+      switch (true) {
+        case wind_direction >= 0 && wind_direction < 45:
+          wind_direction_letter = "North";
+          break;
+        case wind_direction >= 45 && wind_direction < 90:
+          wind_direction_letter = "North East";
+          break;
+        case wind_direction >= 90 && wind_direction < 135:
+          wind_direction_letter = "East";
+          break;
+        case wind_direction >= 135 && wind_direction < 180:
+          wind_direction_letter = "South East";
+          break;
+        case wind_direction >= 180 && wind_direction < 225:
+          wind_direction_letter = "South";
+          break;
+        case wind_direction >= 225 && wind_direction < 270:
+          wind_direction_letter = "South West";
+          break;
+        case wind_direction >= 270 && wind_direction < 315:
+          wind_direction_letter = "West";
+          break;
+        case wind_direction >= 315 && wind_direction < 360:
+          wind_direction_letter = "North West";
+          break;
+      }
+
+      document.getElementById("current_temp").innerHTML = `Temperature: ${(temp)} c °`;
+      document.getElementById("current_windspeed").innerHTML = `Wind speed: ${(wind_speed)} m/s`;
+      document.getElementById("current_winddirection").innerHTML = `Wind direction: ${(wind_direction_letter)}`;
+      document.getElementById("current_rain").innerHTML = `Rain amount: ${(rain).toFixed(1)} mm`;
+      document.getElementById("current_light").innerHTML = `Light level: ${(light).toFixed(1)}`;
+      document.getElementById("current_humidity_in").innerHTML = `Humidity in: ${(humidity_in).toFixed(1)}`;
+      document.getElementById("current_humidity_out").innerHTML = `Humidity out: ${(humidity_out).toFixed(1)}`;
+
+
+    })
+
 }
 
 function showLoader(){
@@ -164,6 +221,7 @@ function hideLoader(){
 
 function calculateMath(data) {
   const values = data.map(item => parseFloat(item));
+  console.log(values);
   const n = values.length;
   const mean = values.reduce((acc, val) => acc + val, 0) / n;
   const sortedValues = values.slice().sort((a, b) => a - b);
@@ -174,11 +232,16 @@ function calculateMath(data) {
   const mode = Object.entries(modeMap).reduce((a, b) => a[1] > b[1] ? a : b)[0];
   const variance = values.reduce((acc, val) => acc + (val - mean) ** 2, 0) / n;
   const standardDeviation = Math.sqrt(variance);
-
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const range = maxValue - minValue;
+  
   document.getElementById("mean").innerText = `Mean: ${mean.toFixed(1)}`;
   document.getElementById("mode").innerText = `Mode: ${parseFloat(mode).toFixed(1)}`;
   document.getElementById("median").innerText = `Median: ${median.toFixed(1)}`;
-  document.getElementById("deviation").innerText = `Standard deviation: ${standardDeviation.toFixed(1)}`;
+  document.getElementById("deviation").innerText = `Deviation: ${standardDeviation.toFixed(1)}`;
+  document.getElementById("range").innerText = `Range: ${range.toFixed(1)}`;
+
 }
 
 

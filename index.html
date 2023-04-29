@@ -35,10 +35,18 @@
         Loading... 
       </button>
     </section>
-    <div id="current_temp"></div>
-    <div id="current_windspeed"></div>
-    <div id="current_winddirection"></div>
-    <div id="current_rain"></div>
+      <div id="current_temp"></div>
+      <div id="current_windspeed"></div>
+      <div id="current_winddirection"></div>
+      <div id="current_rain"></div>
+      <div id="current_light"></div>
+      <div id="current_humidity_in"></div>
+      <div id="current_humidity_out"></div>
+    
+
+
+
+    <img id="gif" src="https://i.pinimg.com/originals/9b/4d/3f/9b4d3f25ca2e77f9ecba5d959463756b.gif">
   </section>
   <section class=" m-2 p-3 justify-content-center lead container shadow rounded col-lg-8 col-md-8">
     <section><label for="timespan">Timespan:</label>
@@ -52,7 +60,6 @@
       
       <label for="sensor">Sensor:</label>
       <select name="sensor" id="sensor">
-        <option value="limit">All</option>
         <option value="temperature">Temperature</option>
         <option value="windspeed">Windspeed</option>
         <option value="winddirection">Wind Direction</option>
@@ -72,12 +79,13 @@
       <div id="error" class="mt-4"></div>
       <canvas id="chart"></canvas>
     </section>
-    <section class="">
+    <section class="d-flex justify-content-evenly">
       <div id="mean"></div>
       <div id="median"></div>
       <div id="mode"></div>
       <div id="range"></div>
       <div id="deviation"></div>
+      
     </section>
   </section>
 </article>

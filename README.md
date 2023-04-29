@@ -1,5 +1,11 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/n1EiNP04)
-# Final Project
-IoT and Web Development
+Final Project by: Matti Väisänen
 
-Follow the project instructions in Dropbox.
+This site was created for IoT and Web Development 2023 class at TAMK
+
+HTML was created by using Bootstrap 5 and basic HTML.
+Very little CSS was used as Bootstrap 5 is very versatile.
+
+The javascript was created by me with the help of some ChatGPT (obviously).
+I have seperated the javascript mostly into functions to keep it consice and easily readable.
+
+getWeather function as the name suggests, gets the weather information from the API.
