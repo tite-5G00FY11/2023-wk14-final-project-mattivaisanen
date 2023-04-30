@@ -163,10 +163,6 @@ function getCurrentWeather(){
       const humidity_in = data.find(item => item.data.humidity_in !== undefined)?.data.humidity_in;
       const humidity_out = data.find(item => item.data.humidity_out !== undefined)?.data.humidity_out;
 
-
-
-
-
       switch (true) {
         case wind_direction >= 0 && wind_direction < 45:
           wind_direction_letter = "North";
@@ -201,22 +197,17 @@ function getCurrentWeather(){
       document.getElementById("current_light").innerHTML = `Light level: ${(light).toFixed(1)}`;
       document.getElementById("current_humidity_in").innerHTML = `Humidity in: ${(humidity_in).toFixed(1)}`;
       document.getElementById("current_humidity_out").innerHTML = `Humidity out: ${(humidity_out).toFixed(1)}`;
-
-
     })
-
 }
 
 function showLoader(){
   document.getElementById("loader").style.display = 'block';
   document.getElementById("loader2").style.display = 'block';
-
 }
 
 function hideLoader(){
   document.getElementById("loader").style.display = 'none';
   document.getElementById("loader2").style.display = 'none';
-
 }
 
 function calculateMath(data) {
@@ -241,11 +232,7 @@ function calculateMath(data) {
   document.getElementById("median").innerText = `Median: ${median.toFixed(1)}`;
   document.getElementById("deviation").innerText = `Deviation: ${standardDeviation.toFixed(1)}`;
   document.getElementById("range").innerText = `Range: ${range.toFixed(1)}`;
-
 }
-
-
-
 
 getWeather();
 getCurrentWeather();
