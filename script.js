@@ -229,7 +229,6 @@ function hideLoader(){
 
 //calculating the math from a specific table
 function calculateMath(data) {
-  let median;
   //change the array of strings into array of floats
   const values = data.map(item => parseFloat(item));
   const length = values.length;   //length of the map
@@ -242,7 +241,7 @@ function calculateMath(data) {
   const mid = Math.floor(length / 2);
 
   //median is the middle value of an array.
-  median = sortedValues[mid];
+  const median = sortedValues[mid];
 
   //standard deviation shows how deviated the values are of eachother
   //variance is calculated by the sum of all the values with the mean subtracted squared, divided by the lenght of the array
