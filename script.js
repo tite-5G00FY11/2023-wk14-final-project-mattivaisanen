@@ -205,7 +205,7 @@ function getCurrentWeather(){
       }
 
       //Setting the div elements to show the weather values.
-      document.getElementById("current_temp").innerHTML = `Temperature: ${(temp)} c °`;
+      document.getElementById("current_temp").innerHTML = `Temperature: ${(temp.toFixed(1))} c °`;
       document.getElementById("current_windspeed").innerHTML = `Wind speed: ${(wind_speed)} m/s`;
       document.getElementById("current_winddirection").innerHTML = `Wind direction: ${(wind_direction_letter)} (${(wind_direction)}°)`;
       document.getElementById("current_rain").innerHTML = `Rain amount: ${(rain).toFixed(1)} mm`;
